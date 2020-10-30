@@ -13,13 +13,13 @@ namespace StringFinder
     {
         private const string _fileName = "extension.txt";
 
-        private int _totalCount;
-
         private List<string> _extensions;
 
         private bool _isSearching;
 
         private Thread _searchingThread;
+
+        private List<ListViewItem> _listItems;
 
         public StringFinder()
         {
@@ -27,8 +27,7 @@ namespace StringFinder
 
             InitExtension();
             _isSearching = false;
-            //tbFolderPath.Text = @"D:\DEMO\Test";
-            //tbString.Text = "EMS";
+            _listItems = new List<ListViewItem>();
 
             DoubleBuffered(lvResult, true);
 
@@ -36,6 +35,7 @@ namespace StringFinder
             lvResult.MouseDown += LvResult_MouseDown;
             tbString.PreviewKeyDown += PreviewKeyDownEvent;
             tbFolderPath.PreviewKeyDown += PreviewKeyDownEvent;
+            tbFilter.TextChanged += FilterTextChanged;
         }
 
         private void PreviewKeyDownEvent(object sender, PreviewKeyDownEventArgs e)
@@ -44,6 +44,25 @@ namespace StringFinder
             {
                 btnSearch_Click(null, null);
             }
+        }
+
+        private void FilterTextChanged(object sender, EventArgs e)
+        {
+            if (_listItems.Count == 0 || _isSearching)
+            {
+                return;
+            }
+
+            lvResult.Items.Clear();
+            foreach (var item in _listItems)
+            {
+                if (item.SubItems[0].Text.Contains(tbFilter.Text))
+                {
+                    lvResult.Items.Add(item);
+                }
+            }
+
+            UpdateTotalCountString();
         }
 
         private void DoubleBuffered(Control control, bool enable)
@@ -162,7 +181,6 @@ namespace StringFinder
             }
 
             lvResult.Items.Clear();
-            _totalCount = 0;
             UpdateTotalCountString();
 
             _isSearching = true;
@@ -178,6 +196,8 @@ namespace StringFinder
 
                 //lbSearching.Visible = false;
 
+                CopyMasterListItem();
+
                 MessageBox.Show("Finished");
                 _searchingThread = null;
                 _isSearching = false;
@@ -186,11 +206,23 @@ namespace StringFinder
             _searchingThread.Start();
         }
 
+        private void CopyMasterListItem()
+        {
+            _listItems.Clear();
+            this.Invoke(new Action(delegate ()
+            {
+                foreach (ListViewItem item in lvResult.Items)
+                {
+                    _listItems.Add(item);
+                }
+            }));
+        }
+
         private void UpdateTotalCountString()
         {
             this.Invoke(new Action(delegate ()
             {
-                lbTotalCount.Text = _totalCount.ToString();
+                lbTotalCount.Text = lvResult.Items.Count.ToString();
             }));
         }
 
@@ -254,7 +286,7 @@ namespace StringFinder
                     file = file.ToUpperInvariant();
                 }
 
-                if (isExtensionOnly && file.Contains(text))
+                if (!isExtensionOnly && file.Contains(text))
                 {
                     ListViewItem item = new ListViewItem(tempFile);
 
@@ -265,7 +297,6 @@ namespace StringFinder
                         lvResult.EndUpdate();
                     }));
 
-                    _totalCount++;
                     UpdateTotalCountString();
                 }
                 else
@@ -327,7 +358,6 @@ namespace StringFinder
                             lvResult.EndUpdate();
                         }));
 
-                        _totalCount++;
                         UpdateTotalCountString();
                     }
                 }

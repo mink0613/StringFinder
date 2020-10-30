@@ -42,6 +42,8 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileExtensionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbFilter = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,9 +94,9 @@
             this.lvResult.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.Path});
             this.lvResult.GridLines = true;
-            this.lvResult.Location = new System.Drawing.Point(15, 113);
+            this.lvResult.Location = new System.Drawing.Point(15, 119);
             this.lvResult.Name = "lvResult";
-            this.lvResult.Size = new System.Drawing.Size(718, 325);
+            this.lvResult.Size = new System.Drawing.Size(718, 319);
             this.lvResult.TabIndex = 5;
             this.lvResult.UseCompatibleStateImageBehavior = false;
             this.lvResult.View = System.Windows.Forms.View.Details;
@@ -162,15 +164,33 @@
             // fileExtensionsToolStripMenuItem
             // 
             this.fileExtensionsToolStripMenuItem.Name = "fileExtensionsToolStripMenuItem";
-            this.fileExtensionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileExtensionsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.fileExtensionsToolStripMenuItem.Text = "File Extensions";
             this.fileExtensionsToolStripMenuItem.Click += new System.EventHandler(this.fileExtensionsToolStripMenuItem_Click);
             // 
-            // Form1
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 96);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Filter result";
+            // 
+            // tbFilter
+            // 
+            this.tbFilter.Location = new System.Drawing.Point(79, 93);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(165, 20);
+            this.tbFilter.TabIndex = 11;
+            // 
+            // StringFinder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(754, 450);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.lbSearching);
             this.Controls.Add(this.cbCase);
             this.Controls.Add(this.lbTotalCount);
@@ -185,7 +205,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "StringFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "String Finder";
             this.menuStrip1.ResumeLayout(false);
@@ -211,6 +231,8 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileExtensionsToolStripMenuItem;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }
 

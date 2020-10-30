@@ -211,7 +211,28 @@ namespace StringFinder
                 return;
             }
 
-            List<string> extensions;
+            List<string> extensions = _extensions;
+            bool isExtensionOnly = false;
+
+            // If text contains * (ex: *.txt or *.log)
+            // then it searches all files that only has specific extension
+            if (text.Contains("*"))
+            {
+                extensions.Clear();
+                extensions.Add(text.Split('.')[1]);
+                isExtensionOnly = true;
+            }
+
+            if (!caseSensitive)
+            {
+                for (int i = 0; i < extensions.Count; i++)
+                {
+                    string ex = extensions[i];
+                    ex = ex.ToUpperInvariant();
+                    extensions.RemoveAt(i);
+                    extensions.Insert(i, ex);
+                }
+            }
 
             foreach (string tempFile in files)
             {
@@ -221,19 +242,9 @@ namespace StringFinder
                 {
                     text = text.ToUpperInvariant();
                     file = file.ToUpperInvariant();
-
-                    extensions = new List<string>();
-                    foreach (string ex in _extensions)
-                    {
-                        extensions.Add(ex.ToUpperInvariant());
-                    }
-                }
-                else
-                {
-                    extensions = _extensions;
                 }
 
-                if (file.Contains(text))
+                if (isExtensionOnly && file.Contains(text))
                 {
                     ListViewItem item = new ListViewItem(tempFile);
 
@@ -260,42 +271,54 @@ namespace StringFinder
                         continue;
                     }
 
-                    try
+                    bool isFound = false;
+                    if (isExtensionOnly)
                     {
-                        using (FileStream fs = File.OpenRead(file))
-                        using (BufferedStream bs = new BufferedStream(fs))
-                        using (StreamReader sr = new StreamReader(bs))
+                        isFound = true;
+                    }
+                    else
+                    {
+                        try
                         {
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
+                            using (FileStream fs = File.OpenRead(file))
+                            using (BufferedStream bs = new BufferedStream(fs))
+                            using (StreamReader sr = new StreamReader(bs))
                             {
-                                if (!caseSensitive)
+                                string line;
+                                while ((line = sr.ReadLine()) != null)
                                 {
-                                    line = line.ToUpperInvariant();
-                                }
-
-                                if (line.Contains(text))
-                                {
-                                    ListViewItem item = new ListViewItem(tempFile);
-
-                                    this.Invoke(new Action(delegate ()
+                                    if (!caseSensitive)
                                     {
-                                        lvResult.BeginUpdate();
-                                        lvResult.Items.Add(item);
-                                        lvResult.EndUpdate();
-                                    }));
+                                        line = line.ToUpperInvariant();
+                                    }
 
-                                    _totalCount++;
-                                    UpdateTotalCountString();
-
-                                    break;
+                                    if (line.Contains(text))
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
+                        catch (Exception e)
+                        {
 
+                        }
+                    }
+
+                    if (isFound)
+                    {
+                        ListViewItem item = new ListViewItem(tempFile);
+
+                        this.Invoke(new Action(delegate ()
+                        {
+                            lvResult.BeginUpdate();
+                            lvResult.Items.Add(item);
+                            lvResult.EndUpdate();
+                        }));
+
+                        _totalCount++;
+                        UpdateTotalCountString();
                     }
                 }
             }

@@ -196,7 +196,17 @@ namespace StringFinder
 
         private void Find(string folderPath, string text, bool caseSensitive)
         {
-            string[] subFolders = Directory.GetDirectories(folderPath);
+            string[] subFolders;
+            try
+            {
+                subFolders = Directory.GetDirectories(folderPath);
+            }
+            catch (Exception e)
+            {
+                //MessageBox.Show(e.ToString());
+                return;
+            }
+
             if (subFolders != null && subFolders.Length > 0)
             {
                 foreach (string subFolder in subFolders)
